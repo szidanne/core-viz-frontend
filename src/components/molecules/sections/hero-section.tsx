@@ -12,6 +12,7 @@ const HeroSection = () => {
       description="Upload your data, customize your charts, and share your insights effortlessly."
       buttonText="Get started"
       onButtonClick={() => {}}
+      reverse
     />
   );
 };

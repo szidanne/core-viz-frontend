@@ -10,8 +10,12 @@ const DemoSection = () => {
       lightBackground="bg-gray-200"
       darkBackground="bg-jet"
     >
-      <div className="flex flex-col max-w-md">
-        <img src={"https://picsum.photos/id/237/600/400"} alt={""} />
+      <div className="flex flex-col max-w-lg">
+        <img
+          className="rounded-lg"
+          src={"https://picsum.photos/id/237/600/400"}
+          alt={""}
+        />
         Video
       </div>
     </Section>
