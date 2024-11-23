@@ -57,7 +57,7 @@ const Section: React.FC<SectionProps> = ({
               <Typography
                 as="h2"
                 size="xl"
-                weight="bold"
+                weight="semibold"
                 className="mb-2 md:mb-6 md:text-3xl"
               >
                 {title}

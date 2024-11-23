@@ -26,7 +26,7 @@ const PageTemplate: React.FC<PageTemplateProps> = ({ children }) => {
           {children}
         </Content>
         <Footer
-          className={` "bg-light-background dark:bg-dark-background border-t border-french-gray border-opacity-40" ${classNames.horizontalPadding}`}
+          className={` "bg-light-background dark:bg-dark-background border-t border-french-gray border-opacity-40 ${classNames.horizontalPadding}`}
         >
           <Typography>Footer</Typography>
         </Footer>
