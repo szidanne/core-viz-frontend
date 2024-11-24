@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import parseFile from "@/utils/file-parser";
+import { detectType } from "@/utils/general";
 
 type FileContextType = {
   file?: File;
@@ -29,13 +30,19 @@ export const FileProvider: React.FC<Template> = ({ children }) => {
           ...row,
           key: idx,
         }));
-        const columns = Object.keys(r[0]).map((key, idx) => ({
-          key,
-          title: key,
-          dataIndex: key,
-          fixed: idx <= 1 ? "left" : undefined,
-          width: 250,
-        }));
+
+        const sampleRow = r[0];
+        const columns: FileData["columns"] = Object.keys(sampleRow).map(
+          (key, idx) => ({
+            key,
+            title: key,
+            dataIndex: key,
+            fixed: idx <= 1 ? "left" : undefined,
+            width: 250,
+            type: detectType(sampleRow[key]),
+          }),
+        );
+
         setFileData({ dataSource, columns });
       });
     } else {

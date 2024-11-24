@@ -1,13 +1,16 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Typography from "@/components/atoms/typography";
-import Upload from "@/components/molecules/Upload";
-import parseFile from "@/utils/file-parser";
+import Upload from "@/components/molecules/upload";
 import { useFileContext } from "@/context/file-context";
 import { Table } from "antd";
 import RoundedButton from "@/components/atoms/rounded-button";
 
-const UploadPage: React.FC = () => {
+interface Props {
+  setStep?: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const UploadPage: React.FC<Props> = ({ setStep = () => {} }) => {
   const { file, setFile, fileData } = useFileContext();
 
   return (
@@ -18,7 +21,11 @@ const UploadPage: React.FC = () => {
       <Upload onChange={(file) => setFile(file)} file={file} />
       {file && (
         <div className="flex flex-col gap-3 items-end mt-3">
-          <RoundedButton type="primary" className="w-fit">
+          <RoundedButton
+            type="primary"
+            className="w-fit"
+            onClick={() => setStep((prev) => prev + 1)}
+          >
             Chart builder
           </RoundedButton>
           <div className="w-full">

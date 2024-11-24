@@ -1,13 +1,19 @@
 import React from "react";
-import { Button, ButtonProps } from "antd";
+import { Button, ButtonProps, Tooltip } from "antd";
 
-interface Props extends ButtonProps {}
+interface Props extends ButtonProps {
+  tooltip?: string;
+}
 
 const RoundedButton: React.FC<Props> = (props) => {
   return (
-    <Button {...props} className={`rounded-full ${props.className}`}>
-      {props.children}
-    </Button>
+    <Tooltip title={props.tooltip}>
+      <div>
+        <Button {...props} className={`rounded-full ${props.className}`}>
+          {props.children}
+        </Button>
+      </div>
+    </Tooltip>
   );
 };
 export default RoundedButton;

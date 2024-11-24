@@ -1,5 +1,5 @@
 import React from "react";
-import type { UploadFile, UploadProps } from "antd";
+import type { UploadProps } from "antd";
 import { Upload as AntUpload } from "antd";
 import { IoAdd } from "react-icons/io5";
 
@@ -26,7 +26,6 @@ const Upload: React.FC<Props> = ({
     accept: acceptedFileTypes?.join(", "),
     onChange: (info) => {
       if (info.file.status === "done" || info.file.status === undefined) {
-        console.log(info.file);
         onChange(info.file); // Pass the original file object
       }
     },
