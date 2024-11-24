@@ -1,6 +1,6 @@
 "use client";
 import React, { useMemo } from "react";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/context/theme-context";
 import { classNames } from "@/theme/classNames";
 import Typography from "@/components/atoms/typography";
 import RoundedButton from "@/components/atoms/rounded-button";
@@ -10,28 +10,24 @@ export interface SectionProps {
   title?: string;
   description?: string;
   image?: string;
-  buttonText?: string;
-  onButtonClick?: () => void;
   children?: React.ReactNode;
   reverse?: boolean; // Reverse the image and content layout (default is false)
   lightBackground?: string;
   darkBackground?: string;
   className?: string;
-  buttonType?: ButtonType;
+  extra?: React.ReactNode;
 }
 
 const Section: React.FC<SectionProps> = ({
   title,
   description,
   image,
-  buttonText,
-  onButtonClick,
   children,
   reverse = false, // Optional: Reverse the layout for visual appeal
   lightBackground = "bg-light-surface",
   darkBackground = "bg-dark-surface",
   className = "",
-  buttonType = "primary",
+  extra,
 }) => {
   const { theme } = useTheme();
 
@@ -51,7 +47,7 @@ const Section: React.FC<SectionProps> = ({
             : "md:flex-row lg:flex-row"
         } flex items-center justify-between flex-col-reverse gap-6`}
       >
-        {(title || description || buttonText) && (
+        {(title || description || extra) && (
           <div className="max-w-2xl w-full">
             {title && (
               <Typography
@@ -74,14 +70,10 @@ const Section: React.FC<SectionProps> = ({
                 {description}
               </Typography>
             )}
-            {buttonText && (
-              <RoundedButton
-                className="mt-4 md:mt-6"
-                type={buttonType}
-                onClick={onButtonClick}
-              >
-                {buttonText}
-              </RoundedButton>
+            {extra && (
+              <div className="flex items-center gap-2 mt-4 md:mt-6">
+                {extra}
+              </div>
             )}
           </div>
         )}

@@ -1,8 +1,11 @@
 "use client";
 import React from "react";
 import Section from "@/components/molecules/section";
+import RoundedButton from "@/components/atoms/rounded-button";
+import { useRouter } from "next/navigation";
 
 const HeroSection = () => {
+  const router = useRouter();
   return (
     <Section
       image="https://picsum.photos/id/232/600/400"
@@ -10,9 +13,18 @@ const HeroSection = () => {
       darkBackground="bg-gradient-to-r from-slate-700 to-gray-800"
       title="Turn your data into stunning visuals"
       description="Upload your data, customize your charts, and share your insights effortlessly."
-      buttonText="Get started"
-      onButtonClick={() => {}}
       reverse
+      extra={
+        <RoundedButton
+          type="primary"
+          size="large"
+          onClick={() => {
+            router.push("/playground");
+          }}
+        >
+          Get started
+        </RoundedButton>
+      }
     />
   );
 };

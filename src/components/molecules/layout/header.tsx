@@ -3,7 +3,7 @@ import { Header as AntHeader } from "antd/es/layout/layout";
 import { classNames } from "@/theme/classNames";
 import Typography from "@/components/atoms/typography";
 import RoundedButton from "@/components/atoms/rounded-button";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/context/theme-context";
 import { IoMdMoon } from "react-icons/io";
 import { FiSun } from "react-icons/fi";
 
@@ -20,7 +20,7 @@ const Header: React.FC = () => {
       <div
         className={`flex items-center justify-between w-full ${classNames.maxWidth}`}
       >
-        <Typography size="small">
+        <Typography size="small" href="/">
           Core<span className="font-semibold">Viz</span>
         </Typography>
         <RoundedButton icon={themeIcon} onClick={toggleTheme} />

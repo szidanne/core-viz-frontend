@@ -2,7 +2,7 @@
 import React from "react";
 import { ConfigProvider, Layout, theme as antdTheme } from "antd";
 import { Content, Footer } from "antd/es/layout/layout";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/context/theme-context";
 import Typography from "@/components/atoms/typography";
 import { classNames } from "@/theme/classNames";
 import Header from "@/components/molecules/layout/header";

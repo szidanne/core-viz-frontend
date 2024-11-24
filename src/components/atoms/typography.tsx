@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo } from "react";
 import { inter } from "@/theme/font";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/context/theme-context";
 import Link from "next/link";
 import { JSX } from "react/jsx-runtime";
 
