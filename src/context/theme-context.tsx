@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { ConfigProvider, theme as antdTheme } from "antd";
 
 type ThemeContextType = {
   theme: "light" | "dark";
@@ -42,7 +43,16 @@ export const ThemeProvider: React.FC<Template> = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <ConfigProvider
+        theme={{
+          algorithm:
+            theme === "dark"
+              ? antdTheme.darkAlgorithm
+              : antdTheme.defaultAlgorithm,
+        }}
+      >
+        {children}
+      </ConfigProvider>
     </ThemeContext.Provider>
   );
 };
