@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_dark from "@amcharts/amcharts4/themes/dark";
-import { useTheme } from "@/context/theme-context";
 import { sortByDate } from "@/utils/general";
 
 interface Props {
@@ -11,7 +9,6 @@ interface Props {
 }
 
 const LineChart: React.FC<Props> = ({ data, dataKeys }) => {
-  const { theme } = useTheme();
   const chartContainer = useRef<HTMLDivElement>(null);
 
   const { yField, xField } = useMemo(() => {
@@ -22,52 +19,77 @@ const LineChart: React.FC<Props> = ({ data, dataKeys }) => {
   }, [dataKeys]);
 
   useEffect(() => {
-    if (theme === "dark") {
-      am4core.useTheme(am4themes_dark);
-    } else {
-      am4core.unuseTheme(am4themes_dark);
-    }
-
     const chart = am4core.create(chartContainer.current!, am4charts.XYChart);
 
+    // Handle x-axis configuration
     const xDataKey = dataKeys.find((config) => config.type === "x");
-    if (xDataKey)
-      if (xDataKey.dataType === "date") {
-        const xAxis = chart.xAxes.push(new am4charts.DateAxis());
-        xAxis.dataFields.date = xField; // For CategoryAxis, or date for DateAxis
-        xAxis.title.text = xDataKey.label;
-      } else {
-        const xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-        xAxis.dataFields.category = xField; // For CategoryAxis, or date for DateAxis
-        xAxis.title.text = xDataKey.label;
-      }
-
-    const yDataKey = dataKeys.find((config) => config.type === "y");
-    if (yDataKey) {
-      const yAxis = chart.yAxes.push(new am4charts.ValueAxis());
-      yAxis.title.text = yDataKey.label;
+    let xAxis: am4charts.Axis;
+    if (xDataKey?.dataType === "date") {
+      const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+      dateAxis.dataFields.date = xField;
+      xAxis = dateAxis;
+    } else {
+      const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+      categoryAxis.dataFields.category = xField;
+      xAxis = categoryAxis;
     }
+    xAxis.title.text = xDataKey?.label ?? xDataKey?.key ?? "";
 
+    // Handle y-axis configuration
+    const yDataKey = dataKeys.find((config) => config.type === "y");
+    const yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    yAxis.title.text = yDataKey?.label ?? yDataKey?.key ?? "";
+
+    // Configure series
     const series = chart.series.push(new am4charts.LineSeries());
     series.dataFields.valueY = yField;
+
     if (xDataKey?.dataType === "date") {
       series.dataFields.dateX = xField;
-      series.tooltipText = "{dateX}: [bold]{valueY}[/]";
+      series.tooltipText =
+        "{dateX.formatDate('yyyy-MM-dd')}: [bold]{valueY}[/]";
     } else {
       series.dataFields.categoryX = xField;
       series.tooltipText = "{categoryX}: [bold]{valueY}[/]";
     }
 
-    series.strokeWidth = 2;
+    series.strokeWidth = 3;
+    series.tensionX = 0.8; // Smooth curves
 
+    // Add rounded bullets
     const bullet = series.bullets.push(new am4charts.CircleBullet());
-    bullet.circle.radius = 4;
+    bullet.circle.radius = 5;
 
+    // Configure cursor for zooming
+    chart.cursor = new am4charts.XYCursor();
+    chart.cursor.behavior = "zoomX";
+
+    // Add scrollbars for panning/zooming
+    const scrollbarX = new am4charts.XYChartScrollbar();
+    scrollbarX.series.push(series);
+    chart.scrollbarX = scrollbarX;
+
+    // Set data and initial zoom
     chart.data =
       xDataKey?.dataType === "date" ? sortByDate(data, xDataKey?.key) : data;
 
+    // Initial zoom for the first 20 data points
+    chart.events.on("ready", () => {
+      if (xDataKey?.dataType === "date") {
+        const firstDate = new Date(chart.data[0][xField]);
+        const twentiethDate = new Date(
+          chart.data[Math.min(19, chart.data.length - 1)][xField],
+        );
+        (xAxis as am4charts.DateAxis).zoomToDates(firstDate, twentiethDate);
+      } else {
+        (xAxis as am4charts.CategoryAxis).start = 0;
+        (xAxis as am4charts.CategoryAxis).end =
+          Math.min(20, chart.data.length) / chart.data.length;
+      }
+    });
+
     return () => chart.dispose();
-  }, [data, xField, yField, theme]);
+  }, [data, xField, yField]);
 
   return (
     <div ref={chartContainer} style={{ width: "100%", height: "400px" }} />

@@ -1,10 +1,15 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { Spin } from "antd";
 import Typography from "@/components/atoms/typography";
+import am4themes_dark from "@amcharts/amcharts4/themes/dark";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import * as am4core from "@amcharts/amcharts4/core";
+import { useTheme } from "@/context/theme-context";
 
 const BarChart = lazy(() => import("@/components/organisms/chart/bar-chart"));
 const LineChart = lazy(() => import("@/components/organisms/chart/line-chart"));
 const PieChart = lazy(() => import("@/components/organisms/chart/pie-chart"));
+am4core.useTheme(am4themes_animated);
 
 const ChartPreview: React.FC<DashboardChart> = ({
   data,
@@ -13,6 +18,15 @@ const ChartPreview: React.FC<DashboardChart> = ({
   title = "Title",
   caption = "Description",
 }) => {
+  const { theme } = useTheme();
+  useEffect(() => {
+    if (theme === "dark") {
+      am4core.useTheme(am4themes_dark);
+    } else {
+      am4core.unuseTheme(am4themes_dark);
+    }
+  }, [theme]);
+
   if (!data || data.length === 0) {
     return (
       <Typography className="text-center">

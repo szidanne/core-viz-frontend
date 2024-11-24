@@ -8,7 +8,7 @@ import RoundedButton from "@/components/atoms/rounded-button";
 import ChartDetailsModal from "@/components/organisms/chart/chart-details-modal";
 import ChartList from "@/components/organisms/chart/chart-list";
 import { uuid } from "uuidv4";
-import { parseSnakeCaseToLabel } from "@/utils/general";
+import { parseSnakeCaseToLabel, sortData } from "@/utils/general";
 import ChartPreview from "@/components/organisms/chart/chart-preview";
 import Typography from "@/components/atoms/typography";
 import { FaX } from "react-icons/fa6";
@@ -62,9 +62,7 @@ const ChartBuilder: React.FC<Props> = ({ setStep }) => {
         [category]: { ...curr, [yField]: prevVal + val },
       };
     }, {});
-    return Object.values(grouped).sort(
-      (a: any, b: any) => a[xField] - b[xField],
-    ) as Record<string, any>[];
+    return sortData(Object.values(grouped), [xField]) as Record<string, any>[];
   }, [fileData?.dataSource, formValues]);
 
   const currChart = useMemo(() => {

@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_dark from "@amcharts/amcharts4/themes/dark";
-import { useTheme } from "@/context/theme-context";
+import * as am4plugins_sliceGrouper from "@amcharts/amcharts4/plugins/sliceGrouper";
+import { Form, InputNumber } from "antd";
 
 interface Props {
   data: any[];
@@ -10,8 +10,9 @@ interface Props {
 }
 
 const PieChart: React.FC<Props> = ({ data, dataKeys }) => {
-  const { theme } = useTheme();
   const chartContainer = useRef<HTMLDivElement>(null);
+
+  const [threshold, setThreshold] = useState<number>(1);
 
   const { yField, xField } = useMemo(() => {
     const mapTypeToConfig = Object.fromEntries(
@@ -20,14 +21,9 @@ const PieChart: React.FC<Props> = ({ data, dataKeys }) => {
     return { xField: mapTypeToConfig.x.key, yField: mapTypeToConfig.y.key };
   }, [dataKeys]);
 
-  useEffect(() => {
-    if (theme === "dark") {
-      am4core.useTheme(am4themes_dark);
-    } else {
-      am4core.unuseTheme(am4themes_dark);
-    }
-
+  useLayoutEffect(() => {
     const chart = am4core.create(chartContainer.current!, am4charts.PieChart);
+
     chart.data = data;
 
     const series = chart.series.push(new am4charts.PieSeries());
@@ -36,11 +32,34 @@ const PieChart: React.FC<Props> = ({ data, dataKeys }) => {
     series.slices.template.tooltipText =
       "{category}: [bold]{value.percent.formatNumber('#.0')}% ({value})[/]";
 
+    // If there are more than 15 slices, group the smaller slices under "Other"
+    const grouper = series.plugins.push(
+      new am4plugins_sliceGrouper.SliceGrouper(),
+    );
+
+    // Only apply the grouper if there are more than 15 slices
+    if (data.length > 15) {
+      // Group slices smaller than thresholdValue into "Other"
+      grouper.threshold = threshold;
+      grouper.groupName = "Other"; // Name of the group
+      grouper.clickBehavior = "break"; // Expand "Other" when clicked
+    }
+
     return () => chart.dispose();
-  }, [data, xField, yField, theme]);
+  }, [data, xField, yField, threshold]);
 
   return (
-    <div ref={chartContainer} style={{ width: "100%", height: "400px" }} />
+    <div className="flex flex-col gap-4 items-end">
+      <Form.Item label="Group threshold">
+        <InputNumber
+          placeholder="Threshold"
+          defaultValue={1}
+          onChange={(value) => setThreshold(value as number)}
+          suffix="%"
+        />
+      </Form.Item>
+      <div ref={chartContainer} style={{ width: "100%", height: "400px" }} />
+    </div>
   );
 };
 

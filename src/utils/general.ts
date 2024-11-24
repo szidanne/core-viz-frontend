@@ -33,3 +33,9 @@ export const parseSnakeCaseToLabel = (field: string | undefined) =>
     ?.split("_")
     .map((word, idx) => (idx === 0 ? toTitleCase(word) : word))
     .join(" ");
+
+export const sortData = (
+  data: any[],
+  columnKey: string | string[],
+  asc: boolean = true,
+) => (asc ? _.sortBy(data, columnKey) : _.sortBy(data, columnKey).reverse());
